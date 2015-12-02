@@ -31,6 +31,9 @@ configure = function($) {
   if ($.filesVariableName == null) {
     $.filesVariableName = "$files";
   }
+  if ($.doneFunctionName == null) {
+    $.doneFunctionName = "ok";
+  }
   Snippets = (function() {
     Snippets.prototype.snippets = null;
 
@@ -181,6 +184,8 @@ configure = function($) {
 
     Generator.prototype.filesVariableName = null;
 
+    Generator.prototype.doneFunctionName = null;
+
     function Generator(props) {
       var key, val;
       if (props == null) {
@@ -196,6 +201,9 @@ configure = function($) {
       }
       if (this.filesVariableName == null) {
         this.filesVariableName = $.filesVariableName;
+      }
+      if (this.doneFunctionName == null) {
+        this.doneFunctionName = $.doneFunctionName;
       }
     }
 
@@ -224,6 +232,12 @@ configure = function($) {
           return !_this.coffeeService.isGlobalVariable(v);
         };
       })(this));
+    };
+
+    Generator.prototype.isAsyncAssertion = function(code) {
+      var name;
+      name = this.doneFunctionName;
+      return RegExp("\\b" + name + "\\(\\)").test(code);
     };
 
     Generator.prototype.generateBeforeEach = function(snippets, contextNode) {
@@ -269,10 +283,11 @@ configure = function($) {
     };
 
     Generator.prototype.generateAssertion = function(snippets, assertionNode) {
-      var code, depth, text;
+      var code, depth, fnStartStr, text;
       depth = assertionNode.depth, text = assertionNode.text, code = assertionNode.code;
+      fnStartStr = this.isAsyncAssertion(code) ? "(" + this.doneFunctionName + ") ->" : "->";
       snippets["break"]();
-      snippets.add("it " + (JSON.stringify(text)) + ", ->", depth);
+      snippets.add("it " + (JSON.stringify(text)) + ", " + fnStartStr, depth);
       snippets.add(code, depth + 1);
       return snippets;
     };

@@ -16,13 +16,17 @@ This is a text file
 
 It adds two numbers:
 
-    result = mather.add 2, 2
-    expect(result).toEqual 4
+    mather.add 2, 2, (error, result) ->
+      throw error if error?
+      expect(result).toEqual 4
+      ok()
 
 It adds more than two numbers:
 
-    result = mather.add 2, 2, 2
-    expect(result).toEqual 6
+    result = mather.add 2, 2, 2, (error, result) ->
+      throw error if error?
+      expect(result).toEqual 6
+      ok()
 
 """
 
@@ -32,6 +36,5 @@ parser = new MarkdownDriven.Parser nativeLanguages: ["coffee", "coffeescript"]
 generator = new JasmineCoffee.Generator
 compiler = new MarkdownDriven.Compiler parser: parser, generator: generator
 tokens = require("coffee-script").tokens(example).filter ([type, text]) -> text is "eval"
-console.dir(tokens)
 result = compiler.compile example
 console.log result

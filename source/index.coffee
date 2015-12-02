@@ -6,6 +6,7 @@ configure = ($ = {}) ->
   $.CoffeeScript ?= require("coffee-script")
   $.globalVariables ?= require("./global-variables")
   $.filesVariableName ?= "$files"
+  $.doneFunctionName ?= "ok"
 
   class Snippets
     snippets: null
@@ -77,11 +78,13 @@ configure = ($ = {}) ->
   class Generator
     coffeeService: null
     filesVariableName: null
+    doneFunctionName: null
 
     constructor: (props = {}) ->
       @[key] = val for own key, val of props
       @coffeeService ?= new CoffeeService
       @filesVariableName ?= $.filesVariableName
+      @doneFunctionName ?= $.doneFunctionName
 
     getContextVariableNames: (contextNode) ->
       beforeEachNodes = contextNode.getBeforeEachNodes()
@@ -94,6 +97,10 @@ configure = ($ = {}) ->
         vars = vars.filter (v) -> ancestorVars.indexOf(v) is -1
 
       vars.filter (v) => !@coffeeService.isGlobalVariable(v)
+
+    isAsyncAssertion: (code) ->
+      name = @doneFunctionName
+      ///\b#{name}\(\)///.test code
 
     generateBeforeEach: (snippets, contextNode) ->
       beforeEachNodes = contextNode.getBeforeEachNodes()
@@ -125,8 +132,10 @@ configure = ($ = {}) ->
 
     generateAssertion: (snippets, assertionNode) ->
       {depth, text, code} = assertionNode
+      fnStartStr = if @isAsyncAssertion(code) then "(#{@doneFunctionName}) ->" else "->"
+
       snippets.break()
-      snippets.add "it #{JSON.stringify(text)}, ->", depth
+      snippets.add "it #{JSON.stringify(text)}, #{fnStartStr}", depth
       snippets.add code, depth + 1
       snippets
 
