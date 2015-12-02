@@ -1,0 +1,10 @@
+#!/usr/bin/env coffee
+Path = require "path"
+MarkdownDriven = require '../../boco-markdown-driven/source'
+
+compiler = new MarkdownDriven.Compiler
+  parser: new MarkdownDriven.Parser(nativeLanguages: ["coffee", "coffeescript"])
+  generator: new (require('../source').Generator)
+
+cli = new MarkdownDriven.CLI compiler: compiler
+cli.run()

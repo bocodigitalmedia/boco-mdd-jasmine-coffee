@@ -12,6 +12,8 @@ This is a text file
 ```
 ## Adding Numbers
 
+    foo = eval()
+
 It adds two numbers:
 
     result = mather.add 2, 2
@@ -29,6 +31,7 @@ JasmineCoffee = require './source'
 parser = new MarkdownDriven.Parser nativeLanguages: ["coffee", "coffeescript"]
 generator = new JasmineCoffee.Generator
 compiler = new MarkdownDriven.Compiler parser: parser, generator: generator
-
+tokens = require("coffee-script").tokens(example).filter ([type, text]) -> text is "eval"
+console.dir(tokens)
 result = compiler.compile example
 console.log result

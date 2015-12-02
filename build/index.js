@@ -12,10 +12,7 @@ configure = function($) {
     $.indentationString = "  ";
   }
   if ($.joinString == null) {
-    $.joinString = "\n\n";
-  }
-  if ($.globalVariables == null) {
-    $.globalVariables = ["jasmine", "window", "require"];
+    $.joinString = "\n";
   }
   if ($.reduceUnique == null) {
     $.reduceUnique = function(arr, v) {
@@ -27,6 +24,12 @@ configure = function($) {
   }
   if ($.CoffeeScript == null) {
     $.CoffeeScript = require("coffee-script");
+  }
+  if ($.globalVariables == null) {
+    $.globalVariables = require("./global-variables");
+  }
+  if ($.filesVariableName == null) {
+    $.filesVariableName = "$files";
   }
   Snippets = (function() {
     Snippets.prototype.snippets = null;
@@ -72,9 +75,13 @@ configure = function($) {
 
     Snippets.prototype.add = function(code, depth) {
       if (depth == null) {
-        depth = 0;
+        depth = 1;
       }
       return this.snippets.push(this.indent(code, depth));
+    };
+
+    Snippets.prototype["break"] = function() {
+      return this.snippets.push('');
     };
 
     Snippets.prototype.compile = function() {
@@ -172,6 +179,8 @@ configure = function($) {
   Generator = (function() {
     Generator.prototype.coffeeService = null;
 
+    Generator.prototype.filesVariableName = null;
+
     function Generator(props) {
       var key, val;
       if (props == null) {
@@ -185,18 +194,21 @@ configure = function($) {
       if (this.coffeeService == null) {
         this.coffeeService = new CoffeeService;
       }
+      if (this.filesVariableName == null) {
+        this.filesVariableName = $.filesVariableName;
+      }
     }
 
-    Generator.prototype.getContextVariableNames = function(node) {
+    Generator.prototype.getContextVariableNames = function(contextNode) {
       var ancestorContexts, ancestorVars, beforeEachNodes, code, reduceAncestorVars, vars;
-      beforeEachNodes = node.getBeforeEachNodes();
+      beforeEachNodes = contextNode.getBeforeEachNodes();
       code = beforeEachNodes.map(function(arg) {
         var code;
         code = arg.code;
         return code;
       }).join("\n");
       vars = this.coffeeService.getVariableNames(code);
-      if ((ancestorContexts = node.getAncestorContexts()) != null) {
+      if ((ancestorContexts = contextNode.getAncestorContexts()) != null) {
         reduceAncestorVars = (function(_this) {
           return function(vars, ancestorContext) {
             return vars.concat(_this.getContextVariableNames(ancestorContext));
@@ -214,82 +226,94 @@ configure = function($) {
       })(this));
     };
 
-    Generator.prototype.compileFileNodes = function(snippets, nodes) {
-      var depth, mockFsObject, mockFsString;
-      if (!nodes.length) {
+    Generator.prototype.generateBeforeEach = function(snippets, contextNode) {
+      var beforeEachCode, beforeEachNodes, fileNodes, mockFsObject, mockFsString;
+      beforeEachNodes = contextNode.getBeforeEachNodes();
+      fileNodes = contextNode.getFileNodes();
+      if (!(beforeEachNodes.length || fileNodes.length)) {
         return snippets;
       }
-      depth = nodes[0].depth;
-      mockFsObject = nodes.reduce((function(memo, arg) {
-        var data, path;
-        path = arg.path, data = arg.data;
-        memo[path] = data;
-        return memo;
-      }), {});
-      mockFsString = JSON.stringify(mockFsObject, null, 2);
-      snippets.add("beforeEach ->", depth);
-      snippets.add("mockFsObject = " + mockFsString, depth + 1);
-      snippets.add("require('mock-fs')(mockFsObject)", depth + 1);
-      snippets.add("afterEach ->", depth);
-      snippets.add("require('mock-fs').restore()", depth + 1);
+      snippets["break"]();
+      snippets.add("beforeEach ->", contextNode.depth + 1);
+      if (fileNodes.length) {
+        mockFsObject = fileNodes.reduce((function(memo, arg) {
+          var data, path;
+          path = arg.path, data = arg.data;
+          memo[path] = data;
+          return memo;
+        }), {});
+        mockFsString = JSON.stringify(mockFsObject, null, 2);
+        snippets.add(this.filesVariableName + " = " + mockFsString, contextNode.depth + 2);
+      }
+      if (beforeEachNodes.length) {
+        beforeEachCode = beforeEachNodes.map(function(arg) {
+          var code;
+          code = arg.code;
+          return code;
+        }).join("\n");
+        snippets.add(beforeEachCode, contextNode.depth + 2);
+      }
       return snippets;
     };
 
-    Generator.prototype.compileBeforeEachNodes = function(snippets, nodes) {
-      var code, depth;
-      if (!nodes.length) {
+    Generator.prototype.generateAfterEach = function(snippets, contextNode) {
+      var fileNodes;
+      fileNodes = contextNode.getFileNodes();
+      if (!fileNodes.length) {
         return snippets;
       }
-      depth = nodes[0].depth;
-      code = nodes.map(function(arg) {
-        var code;
-        code = arg.code;
-        return code;
-      }).join("\n");
-      snippets.add("beforeEach ->", depth);
-      snippets.add(code, depth + 1);
+      snippets["break"]();
+      snippets.add("afterEach ->", contextNode.depth + 1);
+      snippets.add(this.filesVariableName + " = null", contextNode.depth + 2);
       return snippets;
     };
 
-    Generator.prototype.compileAssertionNode = function(snippets, node) {
+    Generator.prototype.generateAssertion = function(snippets, assertionNode) {
       var code, depth, text;
-      depth = node.depth, text = node.text, code = node.code;
-      snippets.add("it " + (JSON.stringify(text)) + " ->", depth);
+      depth = assertionNode.depth, text = assertionNode.text, code = assertionNode.code;
+      snippets["break"]();
+      snippets.add("it " + (JSON.stringify(text)) + ", ->", depth);
       snippets.add(code, depth + 1);
       return snippets;
     };
 
-    Generator.prototype.compileAssertionNodes = function(snippets, nodes) {
-      if (!nodes.length) {
+    Generator.prototype.generateAssertions = function(snippets, assertionNodes) {
+      if (!assertionNodes.length) {
         return snippets;
       }
-      return nodes.reduce(this.compileAssertionNode.bind(this), snippets);
+      return assertionNodes.reduce(this.generateAssertion.bind(this), snippets);
     };
 
-    Generator.prototype.compileContextNode = function(snippets, node) {
-      var vars;
-      vars = this.getContextVariableNames(node);
-      snippets.add("describe " + (JSON.stringify(node.text)) + " ->", node.depth);
-      if (vars.length) {
-        snippets.add("[" + (vars.join(', ')) + "] = []", node.depth + 1);
+    Generator.prototype.generateDescribe = function(snippets, contextNode) {
+      var depth, text, vars;
+      depth = contextNode.depth, text = contextNode.text;
+      vars = this.getContextVariableNames(contextNode);
+      if (depth > 1) {
+        snippets["break"]();
       }
-      snippets = this.compileFileNodes(snippets, node.getFileNodes());
-      snippets = this.compileBeforeEachNodes(snippets, node.getBeforeEachNodes());
-      snippets = this.compileAssertionNodes(snippets, node.getAssertionNodes());
-      snippets = this.compileContextNodes(snippets, node.getContextNodes());
+      snippets.add("describe " + (JSON.stringify(text)) + ", ->", depth);
+      if (vars.length) {
+        snippets.add("[" + (vars.join(', ')) + "] = []", depth + 1);
+      }
+      snippets = this.generateBeforeEach(snippets, contextNode);
+      snippets = this.generateAfterEach(snippets, contextNode);
+      snippets = this.generateAssertions(snippets, contextNode.getAssertionNodes());
+      snippets = this.generateDescribes(snippets, contextNode.getContextNodes());
       return snippets;
     };
 
-    Generator.prototype.compileContextNodes = function(snippets, nodes) {
-      if (!nodes.length) {
+    Generator.prototype.generateDescribes = function(snippets, contextNodes) {
+      if (!contextNodes.length) {
         return snippets;
       }
-      return nodes.reduce(this.compileContextNode.bind(this), snippets);
+      return contextNodes.reduce(this.generateDescribe.bind(this), snippets);
     };
 
     Generator.prototype.generate = function(parseTree) {
       var snippets;
-      snippets = this.compileContextNodes(new Snippets(), parseTree.getContextNodes());
+      snippets = new Snippets();
+      snippets.add(this.filesVariableName + " = null\n");
+      snippets = this.generateDescribes(snippets, parseTree.getContextNodes());
       return snippets.compile();
     };
 
