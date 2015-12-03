@@ -1,4 +1,4 @@
-MarkdownDriven = require '../../boco-markdown-driven/source'
+MarkdownDriven = require 'boco-markdown-driven'
 JasmineCoffee = require '../source'
 
 parser = new MarkdownDriven.Parser
