@@ -1,23 +1,56 @@
+
 # boco-mdd-jasmine-coffee
+![npm version](https://img.shields.io/npm/v/boco-mdd-jasmine-coffee.svg)
+![npm license](https://img.shields.io/npm/l/boco-mdd-jasmine-coffee.svg)
+![dependencies](https://david-dm.org/bocodigitalmedia/boco-mdd-jasmine-coffee.png)
 
-Jasmine + CoffeeScript generator for [boco-markdown-driven]
+Jasmine + CoffeeScript generator for [boco-markdown-driven].
 
-    JasmineCoffee = require 'boco-mdd-jasmine-coffee'
-    MarkdownDriven = require '../../boco-markdown-driven'
+* [Installation](#installation)
+* [Using the CLI](#using-the-cli)
+* [Using the API](#using-the-api)
 
-## Compiling
+## Installation
 
-Just pass in a new `JasmineCoffee.Generator` to the `MarkdownDriven.Compiler` constructor:
+Install via [npm]:
 
-    generator = new JasmineCoffee.Generator
-    compiler = new MarkdownDriven.Compiler generator: generator
+```sh
+$ npm install boco-mdd-jasmine-coffee boco-markdown-driven
+```
 
-Let's go ahead and test compiling using our generator:
+## Using the CLI
 
-    markdown = $files['example.md']
-    expected = $files['example.coffee']
-    compiled = compiler.compile markdown
-    expect(compiled).toEqual expected
+```sh
+# global installation
+$ mdd-jasmine-coffee "docs/**/*.coffee.md"
+
+# local installation
+$ ./node_modules/.bin/mdd-jasmine-coffee "docs/**/*.coffee.md"
+
+# getting help
+$ mdd-jasmine-coffee --help
+```
+
+## Using the API
+
+_note: you can view the example markdown and coffeescript files at the end of this section_
+
+```coffee
+JasmineCoffee = require 'boco-mdd-jasmine-coffee'
+MarkdownDriven = require 'boco-markdown-driven'
+
+generator = new JasmineCoffee.Generator
+compiler = new MarkdownDriven.Compiler generator: generator
+```
+
+The compiler will now generate jasmine specs for your markdown:
+
+``` coffee
+compiled = compiler.compile $files['example.md']
+expect(compiled).toEqual $files['example.spec.coffee']
+```
+
+---
 
 ```markdown
 <!-- file: "example.md" -->
@@ -46,7 +79,7 @@ It adds more than two numbers:
 ```
 
 ```coffee
-# file: "example.coffee"
+# file: "example.spec.coffee"
 $files = null
 
 describe "Mather", ->
@@ -71,7 +104,8 @@ describe "Mather", ->
         ok()
 ```
 
-[boco-markdown-driven]: "https://github.com/bocodigitalmedia/boco-markdown-driven"
+[boco-markdown-driven]: https://github.com/bocodigitalmedia/boco-markdown-driven
+[npm]: https://npmjs.org
 
 --------------------------------------------------------------------------------
 
