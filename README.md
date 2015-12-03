@@ -22,13 +22,13 @@ $ npm install boco-mdd-jasmine-coffee boco-markdown-driven
 
 ```sh
 # global installation
-$ mdd-jasmine-coffee "docs/**/*.coffee.md"
+$ boco-mdd-jasmine-coffee "docs/**/*.coffee.md"
 
 # local installation
-$ ./node_modules/.bin/mdd-jasmine-coffee "docs/**/*.coffee.md"
+$ ./node_modules/.bin/boco-mdd-jasmine-coffee "docs/**/*.coffee.md"
 
 # getting help
-$ mdd-jasmine-coffee --help
+$ boco-mdd-jasmine-coffee --help
 ```
 
 ## Using the API
