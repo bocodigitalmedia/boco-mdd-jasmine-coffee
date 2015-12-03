@@ -32,17 +32,17 @@ Mather is a library for doing Math.
 
 It adds two numbers:
 
-  mather.add 2, 2, (error, result) ->
-    throw error if error?
-    expect(result).toEqual 4
-    ok()
+    mather.add 2, 2, (error, result) ->
+      throw error if error?
+      expect(result).toEqual 4
+      ok()
 
 It adds more than two numbers:
 
-  mather.add 3, 4, 5, (error, result) ->
-    throw error if error?
-    expect(result).toEqual 12
-    ok()
+    mather.add 3, 4, 5, (error, result) ->
+      throw error if error?
+      expect(result).toEqual 12
+      ok()
 ```
 
 ```coffee
@@ -59,14 +59,16 @@ describe "Mather", ->
   describe "Adding numbers", ->
 
     it "It adds two numbers:", (ok) ->
-      result = mather.add 2, 2
-      expect(result).toEqual 4
-      ok()
+      mather.add 2, 2, (error, result) ->
+        throw error if error?
+        expect(result).toEqual 4
+        ok()
 
     it "It adds more than two numbers:", (ok) ->
-      result = mather.add 3, 4, 5
-      expect(result).toEqual 12
-      ok()
+      mather.add 3, 4, 5, (error, result) ->
+        throw error if error?
+        expect(result).toEqual 12
+        ok()
 ```
 
 [boco-markdown-driven]: "https://github.com/bocodigitalmedia/boco-markdown-driven"

@@ -249,7 +249,7 @@ configure = function($) {
       }
       snippets["break"]();
       snippets.add("beforeEach ->", contextNode.depth + 1);
-      if (fileNodes.length) {
+      if (!!fileNodes.length) {
         mockFsObject = fileNodes.reduce((function(memo, arg) {
           var data, path;
           path = arg.path, data = arg.data;
@@ -259,7 +259,7 @@ configure = function($) {
         mockFsString = JSON.stringify(mockFsObject, null, 2);
         snippets.add(this.filesVariableName + " = " + mockFsString, contextNode.depth + 2);
       }
-      if (beforeEachNodes.length) {
+      if (!!beforeEachNodes.length) {
         beforeEachCode = beforeEachNodes.map(function(arg) {
           var code;
           code = arg.code;

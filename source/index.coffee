@@ -110,12 +110,12 @@ configure = ($ = {}) ->
       snippets.break()
       snippets.add "beforeEach ->", contextNode.depth + 1
 
-      if fileNodes.length
+      if !!(fileNodes.length)
         mockFsObject = fileNodes.reduce ((memo, {path, data}) -> memo[path] = data; memo), {}
         mockFsString = JSON.stringify mockFsObject, null, 2
         snippets.add "#{@filesVariableName} = #{mockFsString}", contextNode.depth + 2
 
-      if beforeEachNodes.length
+      if !!(beforeEachNodes.length)
         beforeEachCode = beforeEachNodes.map(({code}) -> code).join("\n")
         snippets.add beforeEachCode, contextNode.depth + 2
 
