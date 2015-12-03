@@ -3,22 +3,36 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 coffee="$DIR/../node_modules/.bin/coffee"
 source_dir="$DIR/../source"
 build_dir="$DIR/../build"
+spec_dir="$DIR/../spec"
+bin_dir="$DIR/../bin"
+support_dir="$DIR/../support"
+docs_dir="$DIR/../docs"
 npm_dir="$DIR/.."
 
 clean() {
   clean-build-dir
+  clean-spec-dir
 }
 
 clean-build-dir() {
   rm -f $build_dir/**/*.js $build_dir/**/*.map
 }
 
+clean-spec-dir() {
+  rm -rf $spec_dir/**/*.spec.coffee
+}
+
 build() {
   build-source
+  build-specs
 }
 
 build-source() {
   $coffee -cmb -o $build_dir $source_dir
+}
+
+build-specs() {
+  $coffee $support_dir/build-specs.coffee "docs/**/*.coffee.md"
 }
 
 argv=("$*")

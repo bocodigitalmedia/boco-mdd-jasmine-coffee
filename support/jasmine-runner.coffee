@@ -1,4 +1,3 @@
-#!/usr/bin/env coffee
 Jasmine = require "jasmine"
 jasmine = new Jasmine
 
