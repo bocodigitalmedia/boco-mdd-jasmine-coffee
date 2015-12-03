@@ -17,6 +17,7 @@
   ],
   "author": "Christian Bradley <christianbradley@gmail.com> (https://github.com/christianbradley)",
   "license": "MIT",
+  "bin": "./bin/cli",
   "devDependencies": {
     "boco-markdown-driven": "^0.2.3",
     "coffee-script": "^1.10.0"
