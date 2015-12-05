@@ -8,23 +8,11 @@ bin_dir="$DIR/../bin"
 docs_dir="$DIR/../docs"
 npm_dir="$DIR/.."
 
+
 clean() {
-  clean-build-dir
-  clean-spec-dir
-}
-
-clean-build-dir() {
-  rm -f $build_dir/**/*.js $build_dir/**/*.map
-}
-
-clean-spec-dir() {
-  rm -rf $spec_dir/**/*.spec.coffee
-}
-
-build() {
-  build-source
-  build-readme
-  build-specs
+  find build -name *.js -print0 | xargs -0 rm -f
+  find build -name *.map -print0 | xargs -0 rm -f
+  find spec -name *.spec.coffee -print0 | xargs -0 rm -f
 }
 
 build-source() {
@@ -39,6 +27,12 @@ build-readme() {
 
 build-specs() {
   NODE_PATH=$NODE_PATH:$npm_dir $npm_dir/node_modules/.bin/boco-markdown-driven -c $npm_dir/markdown-driven.json "docs/**/*.coffee.md"
+}
+
+build() {
+  build-source
+  build-readme
+  build-specs
 }
 
 argv=("$*")

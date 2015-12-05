@@ -1,5 +1,5 @@
 configure = ($ = {}) ->
-  $.Core ?= require("boco-mdd-jasmine-core").configure($)
+  $.Core ?= require("../../boco-mdd-jasmine-core").configure($)
   $.CoffeeScript ?= require("coffee-script")
   $.reduceUnique ?= (vals, val) -> vals.push(val) unless val in vals; vals
 
@@ -43,29 +43,29 @@ configure = ($ = {}) ->
       "#{variableName} = {}"
 
     renderDescribeStart: ({text}) ->
-      "\ndescribe #{JSON.stringify(text)} ->"
+      "describe #{JSON.stringify(text)}, ->"
 
     renderInitializeVariables: ({variableNames}) ->
-      "\n[#{variableNames.join(', ')}] = []"
+      "[#{variableNames.join(', ')}] = []"
 
     renderBeforeEachStart: ->
-      "\nbeforeEach ->"
+      "beforeEach ->"
 
     renderAssignFile: ({variableName, path, data}) ->
-      "#{variableName}[#{JSON.stringify(path)}] = #{JSON.stringify(data)}\n"
+      "#{variableName}[#{JSON.stringify(path)}] = #{JSON.stringify(data)}"
 
     renderBeforeEachCode: ({code}) ->
       code
 
     renderAfterEachStart: ->
-      "\nafterEach ->"
+      "afterEach ->"
 
     renderDeleteFile: ({variableName, path}) ->
       "delete #{variableName}[#{JSON.stringify(path)}]"
 
     renderAssertionStart: ({text, isAsync, doneFunctionName}) ->
-      fnArgsStr = if isAsync then "(#{doneFunctionName})" else ""
-      "\nit #{JSON.stringify(text)}, #{fnArgsStr}->"
+      fnArgsStr = if isAsync then "(#{doneFunctionName}) " else ""
+      "it #{JSON.stringify(text)}, #{fnArgsStr}->"
 
     renderAssertionCode: ({code}) ->
       code

@@ -4,8 +4,8 @@
   "description": "Jasmine Coffee Generator for boco-markdown-driven",
   "main": "build/index.js",
   "scripts": {
-    "test": "./npm/test",
-    "preversion": "./npm/run clean build && npm test",
+    "test": "./npm/run clean build && ./npm/test",
+    "preversion": "./npm/run clean build && ./npm/test",
     "build": "./npm/run clean build"
   },
   "keywords": [

@@ -10,7 +10,7 @@ configure = function($) {
     $ = {};
   }
   if ($.Core == null) {
-    $.Core = require("boco-mdd-jasmine-core").configure($);
+    $.Core = require("../../boco-mdd-jasmine-core").configure($);
   }
   if ($.CoffeeScript == null) {
     $.CoffeeScript = require("coffee-script");
@@ -112,23 +112,23 @@ configure = function($) {
     CoffeeSnippetsRenderer.prototype.renderDescribeStart = function(arg) {
       var text;
       text = arg.text;
-      return "\ndescribe " + (JSON.stringify(text)) + " ->";
+      return "describe " + (JSON.stringify(text)) + ", ->";
     };
 
     CoffeeSnippetsRenderer.prototype.renderInitializeVariables = function(arg) {
       var variableNames;
       variableNames = arg.variableNames;
-      return "\n[" + (variableNames.join(', ')) + "] = []";
+      return "[" + (variableNames.join(', ')) + "] = []";
     };
 
     CoffeeSnippetsRenderer.prototype.renderBeforeEachStart = function() {
-      return "\nbeforeEach ->";
+      return "beforeEach ->";
     };
 
     CoffeeSnippetsRenderer.prototype.renderAssignFile = function(arg) {
       var data, path, variableName;
       variableName = arg.variableName, path = arg.path, data = arg.data;
-      return variableName + "[" + (JSON.stringify(path)) + "] = " + (JSON.stringify(data)) + "\n";
+      return variableName + "[" + (JSON.stringify(path)) + "] = " + (JSON.stringify(data));
     };
 
     CoffeeSnippetsRenderer.prototype.renderBeforeEachCode = function(arg) {
@@ -138,7 +138,7 @@ configure = function($) {
     };
 
     CoffeeSnippetsRenderer.prototype.renderAfterEachStart = function() {
-      return "\nafterEach ->";
+      return "afterEach ->";
     };
 
     CoffeeSnippetsRenderer.prototype.renderDeleteFile = function(arg) {
@@ -150,8 +150,8 @@ configure = function($) {
     CoffeeSnippetsRenderer.prototype.renderAssertionStart = function(arg) {
       var doneFunctionName, fnArgsStr, isAsync, text;
       text = arg.text, isAsync = arg.isAsync, doneFunctionName = arg.doneFunctionName;
-      fnArgsStr = isAsync ? "(" + doneFunctionName + ")" : "";
-      return "\nit " + (JSON.stringify(text)) + ", " + fnArgsStr + "->";
+      fnArgsStr = isAsync ? "(" + doneFunctionName + ") " : "";
+      return "it " + (JSON.stringify(text)) + ", " + fnArgsStr + "->";
     };
 
     CoffeeSnippetsRenderer.prototype.renderAssertionCode = function(arg) {
