@@ -5,7 +5,6 @@ source_dir="$DIR/../source"
 build_dir="$DIR/../build"
 spec_dir="$DIR/../spec"
 bin_dir="$DIR/../bin"
-support_dir="$DIR/../support"
 docs_dir="$DIR/../docs"
 npm_dir="$DIR/.."
 
@@ -39,7 +38,7 @@ build-readme() {
 }
 
 build-specs() {
-  $coffee $support_dir/build-specs.coffee "docs/**/*.coffee.md"
+  NODE_PATH=$NODE_PATH:$npm_dir $npm_dir/node_modules/.bin/boco-markdown-driven -c $npm_dir/markdown-driven.json "docs/**/*.coffee.md"
 }
 
 argv=("$*")
