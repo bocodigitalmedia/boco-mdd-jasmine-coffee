@@ -12,7 +12,7 @@ Jasmine + CoffeeScript generator for [boco-markdown-driven].
 
 ## Installation
 
-Install via [npm]:
+Install both this library and [boco-markdown-driven] via [npm]:
 
 ```sh
 $ npm install boco-mdd-jasmine-coffee boco-markdown-driven
@@ -20,16 +20,31 @@ $ npm install boco-mdd-jasmine-coffee boco-markdown-driven
 
 ## Using the CLI
 
-```sh
-# global installation
-$ boco-mdd-jasmine-coffee "docs/**/*.coffee.md"
+Create a configuration file called `markdown-driven.json`:
 
-# local installation
-$ ./node_modules/.bin/boco-mdd-jasmine-coffee "docs/**/*.coffee.md"
-
-# getting help
-$ boco-mdd-jasmine-coffee --help
+```js
+// file: "markdown-driven.json"
+{
+  "generator": "boco-mdd-jasmine-coffee",
+  "parserOptions": {
+    "nativeLanguages": ["coffee", "coffeescript"],
+    "assertionCodePattern": /\bexpect\b/
+  },
+  "converterOptions": {
+    "readDir": "docs",
+    "writeDir": "spec",
+    "writeExt": ".spec.coffee"
+  }
+}
 ```
+
+Run the CLI:
+
+```sh
+$ boco-markdown-driven -c markdown-driven.json "docs/**/*.coffee.md"
+```
+
+See the CLI documentation on [boco-markdown-driven] for more information.
 
 ## Using the API
 

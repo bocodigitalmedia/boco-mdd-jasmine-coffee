@@ -1,6 +1,6 @@
 {
   "name": "boco-mdd-jasmine-coffee",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Jasmine Coffee Generator for boco-markdown-driven",
   "main": "build/index.js",
   "scripts": {
@@ -17,13 +17,12 @@
   ],
   "author": "Christian Bradley <christianbradley@gmail.com> (https://github.com/christianbradley)",
   "license": "MIT",
-  "bin": "./bin/cli",
   "devDependencies": {
-    "boco-markdown-driven": "^0.2.3",
+    "boco-markdown-driven": "^0.3.0",
     "coffee-script": "^1.10.0"
   },
   "peerDependencies": {
-    "boco-markdown-driven": "^0.2.3"
+    "boco-markdown-driven": "^0.3.0"
   },
   "dependencies": {
     "coffee-script": "^1.10.0",

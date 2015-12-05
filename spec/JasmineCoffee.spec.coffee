@@ -6,6 +6,14 @@ describe "boco-mdd-jasmine-coffee", ->
 
   describe "Using the CLI", ->
 
+    beforeEach ->
+      $files = {
+        "markdown-driven.json": "{\n  \"generator\": \"boco-mdd-jasmine-coffee\",\n  \"parserOptions\": {\n    \"nativeLanguages\": [\"coffee\", \"coffeescript\"],\n    \"assertionCodePattern\": /\\bexpect\\b/\n  },\n  \"converterOptions\": {\n    \"readDir\": \"docs\",\n    \"writeDir\": \"spec\",\n    \"writeExt\": \".spec.coffee\"\n  }\n}\n"
+      }
+
+    afterEach ->
+      $files = null
+
   describe "Using the API", ->
     [JasmineCoffee, MarkdownDriven, generator, compiler] = []
 
