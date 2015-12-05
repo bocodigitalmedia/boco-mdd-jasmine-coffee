@@ -25,7 +25,7 @@
     "boco-markdown-driven": "^0.3.0"
   },
   "dependencies": {
-    "boco-mdd-jasmine-core": "^0.1.0",
+    "boco-mdd-jasmine-core": "^0.2.0",
     "coffee-script": "^1.10.0",
     "jasmine": "^2.3.2"
   },

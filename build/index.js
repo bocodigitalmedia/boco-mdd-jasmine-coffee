@@ -10,7 +10,7 @@ configure = function($) {
     $ = {};
   }
   if ($.Core == null) {
-    $.Core = require("../../boco-mdd-jasmine-core").configure($);
+    $.Core = require("boco-mdd-jasmine-core").configure($);
   }
   if ($.CoffeeScript == null) {
     $.CoffeeScript = require("coffee-script");

@@ -1,5 +1,5 @@
 configure = ($ = {}) ->
-  $.Core ?= require("../../boco-mdd-jasmine-core").configure($)
+  $.Core ?= require("boco-mdd-jasmine-core").configure($)
   $.CoffeeScript ?= require("coffee-script")
   $.reduceUnique ?= (vals, val) -> vals.push(val) unless val in vals; vals
 
