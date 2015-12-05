@@ -1,6 +1,6 @@
 {
   "name": "boco-mdd-jasmine-coffee",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Jasmine Coffee Generator for boco-markdown-driven",
   "main": "build/index.js",
   "scripts": {
