@@ -61,20 +61,28 @@ compiler = new MarkdownDriven.Compiler generator: generator
 The compiler will now generate jasmine specs for your markdown:
 
 ``` coffee
-compiled = compiler.compile $files['example.md']
-expect(compiled).toEqual $files['example.spec.coffee']
+markdown = $files['example.coffee.md']
+expected = $files['example.spec.coffee']
+
+compiled = compiler.compile $files['example.coffee.md']
+expect(compiled).toEqual expected
 ```
 
 ---
 
 ```markdown
-<!-- file: "example.md" -->
+<!-- file: "example.coffee.md" -->
 # Mather
 
 Mather is a library for doing Math.
 
     Mather = require "mather"
     mather = new Mather
+
+The following is made available to the `$files` variable:
+
+    # file: "foo.coffee"
+    # and this is the content
 
 ## Adding numbers
 
@@ -95,14 +103,19 @@ It adds more than two numbers:
 
 ```coffee
 # file: "example.spec.coffee"
-$files = null
+$files = {}
 
 describe "Mather", ->
   [Mather, mather] = []
 
   beforeEach ->
+    $files["foo.coffee"] = "# and this is the content\n"
+
     Mather = require "mather"
     mather = new Mather
+
+  afterEach ->
+    delete $files["foo.coffee"]
 
   describe "Adding numbers", ->
 
